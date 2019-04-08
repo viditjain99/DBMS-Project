@@ -1,3 +1,6 @@
+package bookstore;
+
+
 import javax.xml.transform.Result;
 import java.io.IOException;
 import java.sql.*;
@@ -28,6 +31,19 @@ public class BookStore
         System.out.println("7. Back");
         System.out.print("Enter Choice: ");
     }
+    
+    public static void printEmployeesDatabaseMainMenu() {
+    	System.out.println("---------------Employees Database---------------");
+        System.out.println();
+        System.out.println("1. Search Employee");
+        System.out.println("2. Search Employees in a Branch");
+        System.out.println("3. Add Employee");
+        System.out.println("4. Remove Employee");
+        System.out.println("5. Modify Employee Details");
+        System.out.println("6. Back");
+        System.out.print("Enter Choice: ");
+    }
+    
     public static void main(String[] args) throws SQLException
     {
         Scanner scanner=new Scanner(System.in);
@@ -291,17 +307,159 @@ public class BookStore
                         break;
                 }
             }
+            
+            
             else if(choice==2)
             {
                 int employeesDatabaseChoice;
-                System.out.println("---------------Employees Database---------------");
-                System.out.println();
-                System.out.println("1. Search Employee");
-                System.out.println("2. Search Employees in a Branch");
-                System.out.println("3. Add Employee");
-                System.out.println("4. Remove Employee");
-                System.out.println("5. Modify Employee Details");
-                System.out.print("Enter Choice: ");
+                printEmployeesDatabaseMainMenu();
+                int employeeDatabaseChoice=scanner.nextInt();
+                switch(employeeDatabaseChoice)
+                {
+                    case 1:
+                    	System.out.println("1. Search by Name");
+                    	System.out.println("2. Search by Salary");
+                    	System.out.println("3. Search by Address");
+                    	System.out.println("4. Back");
+                    	System.out.print("Enter choice: ");
+                        int ch=scanner.nextInt();
+                        scanner.nextLine();
+                        if(ch==1)
+                        {
+                            System.out.print("Enter Name: ");
+                            String name=scanner.nextLine();
+                            resultSet=statement.executeQuery("select * from Employee where name=\""+name+"\"");
+                            while(resultSet.next())
+                            {
+                                System.out.print(resultSet.getInt(1)+" "+resultSet.getString(2)+" "+
+                                        resultSet.getString(3)+" "+resultSet.getInt(4)+" "+resultSet.getString(5)+" "+
+                                        resultSet.getInt(6));
+                            }
+                            System.out.println();
+                        }
+                        else if(ch==2)
+                        {
+                            System.out.print("Enter Salary: ");
+                            int salary=scanner.nextInt();
+                            statement=connection.createStatement();
+                            resultSet=statement.executeQuery("select * from Employee where salary="+salary);
+                            while(resultSet.next())
+                            {
+                                System.out.print(resultSet.getInt(1)+" "+resultSet.getString(2)+" "+
+                                        resultSet.getString(3)+" "+resultSet.getInt(4)+" "+resultSet.getString(5)+" "+
+                                        resultSet.getInt(6));
+                            }
+                            System.out.println();
+                        }
+                        else if(ch==3)
+                        {
+                            System.out.print("Enter Address: ");
+                            String address=scanner.nextLine();
+                            statement=connection.createStatement();
+                            resultSet=statement.executeQuery("select * from Employee where address=\""+address+"\"");
+                            while(resultSet.next())
+                            {
+                                System.out.print(resultSet.getInt(1)+" "+resultSet.getString(2)+" "+
+                                        resultSet.getString(3)+" "+resultSet.getInt(4)+" "+resultSet.getString(5)+" "+
+                                        resultSet.getInt(6));
+                            }
+                            System.out.println();
+                        }
+                        else if(ch==4)
+                        {
+                            System.out.print("\033[H\033[2J");
+                            System.out.flush();
+                            System.out.println();
+                            printEmployeesDatabaseMainMenu();
+                            employeesDatabaseChoice=scanner.nextInt();
+                        }
+                        else
+                        {
+                            System.out.println("Invalid choice...");
+                        }
+                        break;
+                        
+                        
+                    case 2:
+                        
+
+                    case 3:
+                    	System.out.print("Employee Id: ");
+                        int empId=scanner.nextInt();
+                        System.out.print("Name: ");
+                        String name=scanner.nextLine();
+                        String gender=scanner.nextLine();
+                        String birthdate=scanner.nextLine();
+                        int salary=scanner.nextInt();
+                        String address=scanner.nextLine();
+                        System.out.print("Is he a manager?(Y/N):");
+                        String cho = scanner.nextLine();
+                        if(cho.equals("N")) {
+                        	System.out.print("Name of manager: ");
+                            String man_name=scanner.nextLine();
+                            statement.executeQuery("insert into Employee values("+empId+","+name+","+gender+","+birthdate+","+salary+","+address+")");
+                            statement.executeQuery("insert into manages values("+man_name+","+empId+")");
+                        }
+                        else {
+                        	statement.executeQuery("insert into Employee values("+empId+","+name+","+gender+","+birthdate+","+salary+","+address+")");
+                        }
+                        System.out.println("Employee added");
+                        break;
+
+                    case 4:
+                    	System.out.print("Employee Id: ");
+                        int empid=scanner.nextInt();
+                        statement.executeQuery("delete from Employee where emp_id="+empid);
+                        statement.executeQuery("delete from manages where emp_id="+empid);
+                        System.out.println("Employee Removed");
+                        break;
+                        
+                    case 5:
+                    	System.out.println("1. Change Salary");
+                        System.out.println("2. Change Address");
+                        System.out.println("3. Back");
+                        System.out.print("Enter Choice: ");
+                        int ch1=scanner.nextInt();
+                        if(ch1==1)
+                        {
+                            System.out.print("Employee id: ");
+                            int empid1=scanner.nextInt();
+                            scanner.nextLine();
+                            System.out.print("New salary: ");
+                            int salary1=scanner.nextInt();
+                            statement.executeUpdate("update Employee set salary=\""+salary1+"\" where emp_id="+empid1);
+                        }
+                        else if(ch1==2)
+                        {
+                            System.out.print("Employee id: ");
+                            int empid2=scanner.nextInt();
+                            scanner.nextLine();
+                            System.out.print("New address: ");
+                            String address2=scanner.nextLine();
+                            statement.executeUpdate("update Employee set address=\""+address2+"\" where emp_id="+empid2);
+                        }
+                        else if(ch1==3)
+                        {
+                            System.out.print("\033[H\033[2J");
+                            System.out.flush();
+                            System.out.println();
+                            printEmployeesDatabaseMainMenu();
+                            employeesDatabaseChoice=scanner.nextInt();
+                        }
+                        else
+                        {
+                            System.out.println("Invalid choice...");
+                        }
+                        break;
+
+                    case 6:
+                        System.out.print("\033[H\033[2J");
+                        System.out.flush();
+                        printMainMenu();
+                        choice=scanner.nextInt();
+                        break;
+                }
+                
             }
             else if(choice==3)
             {
